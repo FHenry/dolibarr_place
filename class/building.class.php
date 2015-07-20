@@ -462,6 +462,16 @@ class Building extends Place
     		$resql = $this->db->query($sql);
         	if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
 		}
+		
+		if (! $error)
+		{
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."element_resources";
+			$sql.= " WHERE resource_type='building@place' AND resource_id NOT IN (SELECT rowid FROM ".MAIN_DB_PREFIX."place_building)";
+		
+			dol_syslog(get_class($this)."::delete sql=".$sql);
+			$resql = $this->db->query($sql);
+			if (! $resql) { $error++; $this->errors[]="Error ".$this->db->lasterror(); }
+		}
 
         // Commit or rollback
 		if ($error)
